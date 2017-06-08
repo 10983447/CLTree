@@ -1,8 +1,9 @@
-
+cutdata <- tempdata[,1]
 #-----------------------------------------------------------------------------------------------------------------------
 #----------------------------function to perform cut for each data point of a dimention---------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
 cut <- function(cutdata){
+          
           Range<- max(cutdata) - min(cutdata)
           N <- length(cutdata)
           Y <- length(cutdata)
@@ -54,65 +55,67 @@ cut <- function(cutdata){
 #-----------------------------------------------------------------------------------------------------------------------
 
 getCut <- function(data){
-          #data <- test[,1]
-          
-          total.num<- length(data)
-          #for know dimension each value calc the proportion of data by split
-          Range <- max(data) - min(data)
-          #get best cut 1
-          dcut1 <- cut(data)
-          # right of cut1 region get next best cut 
-          cutdir <- density_dir(data,dcut1)
-          
-          if(cutdir == "Left"){
-                    temp <- data[data < as.numeric(dcut1)]}else{
-                              temp <- data[data > as.numeric(dcut1)]
-                    }
-          
-          dcut2 <- cut(temp)
-          # calc density measure
-          if(cutdir == "Left"){
+          #data <- cutdata
+          if(length(data) < 20){
+                    print("no cut")
+          }else{
+                    total.num<- length(data)
+                    #for know dimension each value calc the proportion of data by split
+                    Range <- max(data) - min(data)
+                    #get best cut 1
+                    dcut1 <- cut(data)
+                    # right of cut1 region get next best cut 
+                    cutdir <- density_dir(data,dcut1)
                     
-                    dcut1_dcut2_Y <-  length(temp[temp > dcut2]) 
-                    dcut1_dcut2_N <-  total.num*(abs(dcut2-dcut1))/Range  
-                    
-                    desity_cut12 <- dcut1_dcut2_Y / dcut1_dcut2_N
-                    
-                    dcut2_r_Y <-  length(temp[temp < dcut2]) 
-                    dcut2_r_N <-  total.num*(abs(dcut2 - min(data)))/Range  
-                    
-                    desity_cut2r <- dcut2_r_Y / dcut2_r_N
-                    
-                    if(desity_cut2r < desity_cut12){ 
-                              # if the region between cut1 and cut2 denser than that between cut2 and right boundary then cut2 is final
-                              bestcut <- dcut2
-                              final_N <- total.num*abs(bestcut - min(data))/Range
-                              final_Y <- length(data[data < bestcut])
-                              final.density <- final_Y/final_N} else{
-                                        # if the region between cut1 and cut2 less dense than that between cut2 and right boundary then perform cut3 and cut3 is final
-                                        temp1 <- temp[temp > dcut2]
-                                        bestcut <- cut(temp1)
-                                        final_N <- total.num*abs(bestcut - dcut1)/Range
-                                        final_Y <- length(data[data < dcut1 & data > bestcut])
-                                        final.density <- final_Y/final_N
+                    if(cutdir == "Left"){
+                              temp <- data[data < as.numeric(dcut1)]}else{
+                                        temp <- data[data > as.numeric(dcut1)]
                               }
-          } else {
-                    dcut1_dcut2_Y <-  length(temp[temp < dcut2]) 
-                    dcut1_dcut2_N <-  total.num*(abs(dcut2-dcut1))/Range  
                     
-                    desity_cut12 <- dcut1_dcut2_Y / dcut1_dcut2_N
-                    
-                    dcut2_r_Y <-  length(temp[temp > dcut2]) 
-                    dcut2_r_N <-  total.num*(abs(dcut2 - max(data)))/Range  
-                    
-                    desity_cut2r <- dcut2_r_Y / dcut2_r_N
-                    
-                    if(desity_cut2r < desity_cut12){ 
-                              # if the region between cut1 and cut2 denser than that between cut2 and right boundary then cut2 is final
-                              bestcut <- dcut2
-                              final_N <- total.num*abs(bestcut - max(data))/Range
-                              final_Y <- length(data[data > bestcut])
-                              final.density <- final_Y/final_N
+                    dcut2 <- cut(temp)
+                    # calc density measure
+                    if(cutdir == "Left"){
+                              
+                              dcut1_dcut2_Y <-  length(temp[temp > dcut2]) 
+                              dcut1_dcut2_N <-  total.num*(abs(dcut2-dcut1))/Range  
+                              
+                              desity_cut12 <- dcut1_dcut2_Y / dcut1_dcut2_N
+                              
+                              dcut2_r_Y <-  length(temp[temp < dcut2]) 
+                              dcut2_r_N <-  total.num*(abs(dcut2 - min(data)))/Range  
+                              
+                              desity_cut2r <- dcut2_r_Y / dcut2_r_N
+                              
+                              if(desity_cut2r < desity_cut12){ 
+                                        # if the region between cut1 and cut2 denser than that between cut2 and right boundary then cut2 is final
+                                        bestcut <- dcut2
+                                        final_N <- total.num*abs(bestcut - min(data))/Range
+                                        final_Y <- length(data[data < bestcut])
+                                        final.density <- final_Y/final_N} else{
+                                                  # if the region between cut1 and cut2 less dense than that between cut2 and right boundary then perform cut3 and cut3 is final
+                                                  temp1 <- temp[temp > dcut2]
+                                                  bestcut <- cut(temp1)
+                                                  final_N <- total.num*abs(bestcut - dcut1)/Range
+                                                  final_Y <- length(data[data < dcut1 & data > bestcut])
+                                                  final.density <- final_Y/final_N
+                                        }
+                    } else {
+                              dcut1_dcut2_Y <-  length(temp[temp < dcut2]) 
+                              dcut1_dcut2_N <-  total.num*(abs(dcut2-dcut1))/Range  
+                              
+                              desity_cut12 <- dcut1_dcut2_Y / dcut1_dcut2_N
+                              
+                              dcut2_r_Y <-  length(temp[temp > dcut2]) 
+                              dcut2_r_N <-  total.num*(abs(dcut2 - max(data)))/Range  
+                              
+                              desity_cut2r <- dcut2_r_Y / dcut2_r_N
+                              
+                              if(desity_cut2r < desity_cut12){ 
+                                        # if the region between cut1 and cut2 denser than that between cut2 and right boundary then cut2 is final
+                                        bestcut <- dcut2
+                                        final_N <- total.num*abs(bestcut - max(data))/Range
+                                        final_Y <- length(data[data > bestcut])
+                                        final.density <- final_Y/final_N
                               } else{
                                         # if the region between cut1 and cut2 less dense than that between cut2 and right boundary then perform cut3 and cut3 is final
                                         temp1 <- temp[temp < dcut2]
@@ -121,13 +124,13 @@ getCut <- function(data){
                                         final_Y <- length(data[data > dcut1 & data < bestcut])
                                         final.density <- final_Y/final_N
                               }
-                    
+                              
                     }
-
-          # store result in a list -- bestcut, lhsdata, rhsdata
-          final.cut <- data.frame(bestcut,final.density)
-          return(final.cut)
-          
+                    
+                    # store result in a list -- bestcut, lhsdata, rhsdata
+                    final.cut <- data.frame(bestcut,final.density)
+                    return(final.cut)
+          }
 }
 
 
@@ -192,11 +195,6 @@ cutResult <- getFeatureCut(test)
 getBestCut<- function(data,cutResult){
           cutResult$var<- rownames(cutResult)
           out <- cutResult[cutResult$final.density == min(cutResult$final.density),]
-          var <- as.character(out$var)
-          cutpoint <- as.numeric(out$bestcut)
-          data[,paste0(var,"cut")] <- "left"
-          data[,paste0(var,"cut")][data[var] > cutpoint + 0.00001] <- "right"
-          
           return(out)
 } 
 
@@ -204,6 +202,7 @@ runCut(data)
 
 
 runCut <- function(data){
+          
           cutResult<- getFeatureCut(data)
           output <- getBestCut(data,cutResult)
           
@@ -239,6 +238,8 @@ growClust <- function(data ,depth, minobs){
                     
                     # add min obs stoping 
                     if (sum(idx[,i]) > minobs){
+                             print(i)
+                              #i = 7
                               tempdata <- data[as.logical(idx[,i]),]
                               rtable[i,1] <- runCut(tempdata)$var
                               rtable[i,2] <- runCut(tempdata)$bestcut
